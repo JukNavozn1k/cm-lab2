@@ -9,10 +9,14 @@
 
 '''
 import numpy as np
+from tabulate import tabulate
+col_names = ["x1", "x2","x3","x4",'=']
 def gaussFunc(matrix):
+    global col_names
     # функция меняет матрицу через побочные эффекты
     # если вам нужно сохранить прежнюю матрицу, скопируйте её np.copy
     for nrow, row in enumerate(matrix):
+        print(tabulate(matrix, headers=col_names, tablefmt="fancy_grid", stralign='center'))
         # nrow равен номеру строки
         # row содержит саму строку матрицы
         divider = row[nrow] # диагональный элемент
@@ -36,6 +40,6 @@ matrix = np.array([[1.35,-1.72,-0.62,0.48,0.93],
                     [1.08,0.64,-0.95,1.54,1.64],
                     [0.88,-0.72,1.36,-0.68,-0.85],
                     [0.64,1.48,0.82,-1.58,-1.32]])
-print(gaussFunc(matrix))
+
 print('############################')
-print(make_identity(gaussFunc(matrix)))
+print(tabulate(make_identity(gaussFunc(matrix)), headers=col_names, tablefmt="fancy_grid", stralign='center'))

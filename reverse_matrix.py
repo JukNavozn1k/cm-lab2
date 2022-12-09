@@ -11,6 +11,8 @@ import numpy as np
 matrix = np.array([[2,-1,1],[3,5,-2],[1,-4,10]]) # матрица коэффицентов
 vecB = np.array([-3,1,0]) # числа, находящиеся справа от знака равно
 reverse_matrix = np.linalg.inv(matrix) # обратная матрица к матрице коэффицентов
+print(reverse_matrix)
+print(vecB)
 vecSolve =  reverse_matrix @ vecB # вектор решений с супер-пупер точностью
 roundedSolve = np.round(vecSolve,3)
 print('Точное решение : ', vecSolve) 

@@ -11,15 +11,21 @@
 
 import numpy as np
 from numpy import array
+from tabulate import tabulate
+A = array([[-0.85,0.05,-0.08,0.14],
+           [0.32,-1.43,-0.12,0.11],
+           [0.17,0.06,-1.08,0.12],
+           [0.21,-0.16,0.36,-1]])
  
-A = array([[2,-1,1],[3,5,-2],[1,-4,10]])
- 
-b = array([[-3],[1],[0]])
+b = array([[0.48],[-1.24],[-1.15],[0.88]])
 m = len(A)
 x = [.0 for i in range(m)]
 Iteration = 0
 converge = False
 pogr = 0.
+col_names = ['Iteration','x1','x2','x3','x4','d']
+data = []
+
 while not converge:
     x_new = np.copy(x)
     for i in range(m):
@@ -27,9 +33,9 @@ while not converge:
         s2 = sum(A[i][j] * x[j] for j in range(i + 1, m))
         x_new[i] = (b[i] - s1 - s2) / A[i][i]
     pogr = sum(abs(x_new[i] - x[i])  for i in range(m))
-    converge =  pogr < 1e-6 # <=========================  epsilon
+    converge =  pogr < 1e-4 # <=========================  epsilon
     Iteration += 1
     x = x_new
-print('Количество итераций :', Iteration)
-print('Решение системы уравнений :', x)
-print('Погрешность :', pogr)
+    data.append([Iteration,x[0],x[1],x[2],x[3],pogr])
+
+print(tabulate(data, headers=col_names, tablefmt="fancy_grid", stralign='center')) 
