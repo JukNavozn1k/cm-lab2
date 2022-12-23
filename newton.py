@@ -1,48 +1,58 @@
-'''
-4. Решить систему нелинейных уравнений 2-го порядка методом Ньютона с точностью е=0,001.
-Уравнения системы:
-
-                                       6*x+tg(x)*y=0                 
-                                       (y^2-2)^2+ln(x)=0
-
-'''
-import numpy as np
-from math import tan,cos,log
+import math
 from tabulate import tabulate
-def f1(x,y):
-    return 6*x + tan(x) *y
-def d1fx(x,y):
-    return 6 + y*(cos(x)**2)
-def d1fy(x,y):
-    return tan(x)
-def f2(x,y):
-    return (y**2-2)**2+log(x)
-def d2fx(x,y):
-    return 1/x
-def d2fy(x,y):
-    return 4*y*(y**2 - 2)
 
+def solve_system_newton(x0, y0, e):
+    # Initialize x and y with the initial values
+    x = x0
+    y = y0
+    
+    # Initialize the iteration counter
+    it = 0
+    
+    # Initialize the table with the initial values of x and y
+    table = [[it, x, y]]
+    
+    while True:
+        # Calculate the functions and their derivatives
+        f1 = math.sin(x + 2.1) - 3 * y + 0.4
+        f1_der_x = math.cos(x + 2.1)
+        f1_der_y = -3
+        f2 = math.cos(y + 1.8) + 1.2 * x
+        f2_der_x = 1.2
+        f2_der_y = -math.sin(y + 1.8)
+        
+        # Calculate the Jacobian matrix
+        jacobian = [[f1_der_x, f1_der_y], [f2_der_x, f2_der_y]]
+        
+        # Calculate the inverse of the Jacobian matrix
+        det = jacobian[0][0] * jacobian[1][1] - jacobian[0][1] * jacobian[1][0]
+        jacobian_inv = [[jacobian[1][1] / det, -jacobian[0][1] / det], [-jacobian[1][0] / det, jacobian[0][0] / det]]
+        
+        # Calculate the function values vector
+        f = [f1, f2]
+        
+        # Calculate the update vector
+        update = [jacobian_inv[0][0] * f[0] + jacobian_inv[0][1] * f[1], jacobian_inv[1][0] * f[0] + jacobian_inv[1][1] * f[1]]
+        
+        # Update x and y
+        x -= update[0]
+        y -= update[1]
+        
+        # Increment the iteration counter
+        it += 1
+        
+        # Add the current values of x and y to the table
+        table.append([it, x, y])
+        
+        # Calculate the maximum update
+        max_update = max(abs(update[0]), abs(update[1]))
+        
+        # Check if the maximum update is smaller than the required accuracy
+        if max_update < e:
+            break
+    
+    # Print the table
+    print(tabulate(table, headers=['Iteration', 'x', 'y']))
 
-def jacobian(x,y):
-    return np.array([[d1fx(x,y),d1fy(x,y)],[d2fx(x,y),d2fy(x,y)]])
-X = np.array([1E-3,1E-3])
-eps = 1E-4
-col_names = ['Iteration','x','y','dxSQR','dySQR']
-data = []
-for i in range(100):    
-    x,y = X
-    
-    
-    J = jacobian(x,y)
-    delta = np.linalg.solve(J,X)
-    NX = X + delta
-    dxs,dys = delta[0]**2,delta[1]**2
-    if (max(dxs,dys) < eps).all(): break
-    X = NX
-    
-    data.append([i+1,x,y,dxs,dys])
-    
-
-
-print(tabulate(data, headers=col_names, tablefmt="fancy_grid", stralign='center')) 
-   
+# Test the function
+solve_system_newton(0, 0, 0.0001)
